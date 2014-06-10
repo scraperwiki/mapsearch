@@ -39,9 +39,11 @@ func main() {
 
 	result := make(chan byte)
 
-	readChunk := func(inx int) {
+	readChunk := func(idx int) {
 		var b byte
-		data := mapping[inx*chunkSize : (inx+1)*chunkSize]
+		start, end := idx*chunkSize, (idx+1)*chunkSize
+		log.Println("start, end =", start, end)
+		data := mapping[start:end]
 		for _, v := range data {
 			b += v
 		}
