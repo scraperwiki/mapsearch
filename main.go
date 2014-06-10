@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"log"
 	"os"
 	"sync"
@@ -44,11 +46,21 @@ func main() {
 
 		data := mapping[start:end]
 
-		s := string(data)
+		buf := bytes.NewReader(data)
 
-		for _, r := range s {
-			b += byte(r % 255)
+		s := bufio.NewScanner(buf)
+
+		lines := 0
+		for s.Scan() {
+			lines++
 		}
+		log.Println("Read", lines, "lines")
+
+		// s := string(data)
+
+		// for _, r := range s {
+		// 	b += byte(r % 255)
+		// }
 		// for _, v := range data {
 		// 	b += v
 		// }
