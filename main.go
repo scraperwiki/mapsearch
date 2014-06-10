@@ -76,8 +76,13 @@ func main() {
 		// }
 
 		i := -1
+		var n int
 		for {
 			i = bytes.Index(data[i+1:], []byte("eckham"))
+			if i == -1 {
+				break
+			}
+			n++
 			prevNL := bytes.LastIndexAny(data[:i], "\n")
 			nextNL := bytes.IndexAny(data[i:], "\n")
 
