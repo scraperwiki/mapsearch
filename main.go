@@ -2,10 +2,10 @@ package main
 
 import (
 	// "bufio"
-	// "bytes"
+	"bytes"
 	"log"
 	"os"
-	"regexp"
+	// "regexp"
 	"sync"
 	"time"
 
@@ -38,7 +38,8 @@ func main() {
 
 	result := make(chan int)
 
-	regex := regexp.MustCompile("(?i)beckham")
+	// regex := regexp.MustCompile("(?i)beckham")
+	// _ = regex
 
 	readChunk := func(idx int) {
 		start, end := idx*chunkSize, (idx+1)*chunkSize
@@ -47,8 +48,11 @@ func main() {
 		}
 
 		data := mapping[start:end]
-		locs := regex.FindIndex(data)
-		matches := len(locs)
+
+		bytes.IndexAny(data, "eckham")
+
+		//locs := regex.FindIndex(data)
+		//matches := len(locs)
 
 		// buf := bytes.NewReader(data)
 		// s := bufio.NewScanner(buf)
@@ -63,7 +67,7 @@ func main() {
 		// }
 		// log.Println("Read", lines, "lines")
 
-		result <- matches
+		// result <- matches
 	}
 
 	var wg sync.WaitGroup
