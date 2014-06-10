@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/edsrzf/mmap-go"
+	"github.com/moovweb/rubex"
 )
 
 const MiB = 1024 * 1024
@@ -39,8 +40,9 @@ func main() {
 
 	result := make(chan int)
 
-	// regex := regexp.MustCompile("(?i)beckham")
+	regex := rubex.MustCompile("(?i)beckham")
 	// _ = regex
+	_ = bytes.IndexFunc
 
 	readChunk := func(idx int) {
 		start, end := idx*chunkSize, (idx+1)*chunkSize
@@ -50,20 +52,21 @@ func main() {
 
 		data := mapping[start:end]
 
-		var n int
-		for {
-			n++
-			i := bytes.Index(data, []byte("eckham"))
-			if i == -1 {
-				break
-			}
-			// log.Println("i=", i, string(data[i:i+50]))
-			data = data[i+1:]
-		}
-		result <- n
+		// var n int
+		// for {
+		// 	n++
+		// 	i := bytes.Index(data, []byte("eckham"))
+		// 	if i == -1 {
+		// 		break
+		// 	}
+		// 	// log.Println("i=", i, string(data[i:i+50]))
+		// 	data = data[i+1:]
+		// }
+		// result <- n
 
-		//locs := regex.FindIndex(data)
-		//matches := len(locs)
+		locs := regex.FindIndex(data)
+		matches := len(locs)
+		result <- matches
 
 		// buf := bytes.NewReader(data)
 		// s := bufio.NewScanner(buf)
