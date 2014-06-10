@@ -161,6 +161,6 @@ func main() {
 
 	http.HandleFunc("/", handler)
 
-	log.Println("Serving on :3000")
-	http.ListenAndServe(":3000", nil)
+	log.Println("Serving on :80")
+	http.ListenAndServe(":80", nil)
 }
