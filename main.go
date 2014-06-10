@@ -69,6 +69,7 @@ func main() {
 				prevNL = 0
 			}
 			// log.Println("i=", i, string(data[i:i+50]))
+			log.Println("start, end, len =", prevNL, here-i+nextNL, len(wholeData)-(here-i+nextNL))
 			line := wholeData[prevNL : here-i+nextNL]
 			fmt.Fprintln(os.Stdout, line)
 			data = data[i+1:]
