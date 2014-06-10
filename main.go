@@ -1,10 +1,11 @@
 package main
 
 import (
-	// "bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"runtime"
 	"sync"
@@ -12,6 +13,10 @@ import (
 
 	"github.com/edsrzf/mmap-go"
 )
+
+func N(n int) []struct{} {
+	return make([]struct{}, n)
+}
 
 func Index(s, sep []byte, start int) int {
 	i := bytes.Index(s[start:], sep)
@@ -41,7 +46,7 @@ func NextNewline(s []byte, start int) int {
 	return nextNL
 }
 
-func main() {
+func Query(output io.Writer, query string) {
 
 	fd, err := os.Open("/mem/output-xsd-fix-no-provenance-factuality.tql")
 	if err != nil {
@@ -115,7 +120,7 @@ func main() {
 		log.Println("Total matches:", len(allResults))
 
 		for _, r := range allResults {
-			fmt.Fprintln(os.Stdout, string(r))
+			fmt.Fprintln(output, string(r))
 		}
 	}()
 
@@ -124,4 +129,17 @@ func main() {
 	log.Println("Elapsed:", time.Since(start))
 	close(result)
 	<-finished
+}
+
+func main() {
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "Hello world ", r.URL.RawQuery)
+		Query(w, r.URL.RawQuery)
+	}
+
+	http.HandleFunc("/", handler)
+
+	log.Println("Serving on :3000")
+	http.ListenAndServe(":3000", nil)
 }
