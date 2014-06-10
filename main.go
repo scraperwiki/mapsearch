@@ -1,10 +1,9 @@
 package main
 
 import (
-	"index/suffixarray"
 	"log"
 	"os"
-	"runtime"
+	"sync"
 	"time"
 
 	"github.com/edsrzf/mmap-go"
@@ -12,8 +11,11 @@ import (
 
 const MiB = 1024 * 1024
 
+func N(n int) []struct{} {
+	return make([]struct{}, n)
+}
+
 func main() {
-	var ms runtime.MemStats
 
 	fd, err := os.Open("/mem/output-xsd-fix-no-provenance-factuality.tql")
 	if err != nil {
@@ -26,32 +28,77 @@ func main() {
 		panic(err)
 	}
 
-	runtime.ReadMemStats(&ms)
-	log.Println("Alloc'd:", ms.Alloc/MiB, "MiB")
+	// runtime.ReadMemStats(&ms)
+	// log.Println("Alloc'd:", ms.Alloc/MiB, "MiB")
+
+	totalSize := len(mapping)
+
+	const Nreaders = 32
+
+	chunkSize := totalSize / Nreaders
+
+	result := make(chan byte)
+
+	readChunk := func(inx int) {
+		var b byte
+		data := mapping[inx*chunkSize : (inx+1)*chunkSize]
+		for _, v := range data {
+			b += v
+		}
+
+		result <- b
+	}
+
+	var wg sync.WaitGroup
+
+	for i := range N(Nreaders) {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			readChunk(i)
+		}()
+	}
+
+	finished := make(chan struct{})
+	go func() {
+		defer close(finished)
+
+		var b byte
+		for r := range result {
+			b += r
+		}
+		log.Println("Result =", b)
+	}()
+
+	start := time.Now()
+	wg.Wait()
+	log.Println("Elapsed:", time.Since(start))
+	close(result)
+	<-finished
 
 	// var b byte
-	amount := 10 * 1024 * 1024
+	// amount := 10 * 1024 * 1024
 
 	// for _, v := range mapping[:amount] {
 	// 	b += v
 	// }
 	// log.Println("Result =", b)
-	data := mapping[:amount]
+	// data := mapping[:amount]
 
-	start := time.Now()
-	index := suffixarray.New(data)
-	log.Println("Took", time.Since(start), "to build suffix array")
+	// start := time.Now()
+	// index := suffixarray.New(data)
+	// log.Println("Took", time.Since(start), "to build suffix array")
 
-	// sa.FindAllIndex(r, 100)
+	// // sa.FindAllIndex(r, 100)
 
-	runtime.ReadMemStats(&ms)
-	log.Println("Alloc'd:", ms.Alloc/MiB, "MiB")
+	// runtime.ReadMemStats(&ms)
+	// log.Println("Alloc'd:", ms.Alloc/MiB, "MiB")
 
-	start = time.Now()
-	places := index.Lookup([]byte("dbpedia"), 10000)
-	log.Println("Lookup time:", time.Since(start))
+	// start = time.Now()
+	// places := index.Lookup([]byte("dbpedia"), 10000)
+	// log.Println("Lookup time:", time.Since(start))
 
-	log.Println("N places:", len(places))
-	log.Println("places:", places[:10])
+	// log.Println("N places:", len(places))
+	// log.Println("places:", places[:10])
 
 }
