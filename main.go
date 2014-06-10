@@ -191,7 +191,7 @@ func main() {
 		}
 		log.Println("Total matches:", len(allResults))
 
-		for r := range allResults {
+		for _, r := range allResults {
 			fmt.Fprintln(os.Stdout, string(r))
 		}
 	}()
