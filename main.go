@@ -84,25 +84,25 @@ func main() {
 			if i == -1 {
 				break
 			}
-			n++
-			prevNL := bytes.LastIndexAny(data[:i], "\n")
-			if prevNL == -1 {
-				// Line start is at beginning of chunk
-				prevNL = 0
-			}
-			nextNL := bytes.IndexAny(data[i:], "\n")
-			if nextNL == -1 {
-				// Line end is at end of chunk
-				nextNL = len(data) - 1
-			} else {
-				nextNL += i
-			}
+			// n++
+			// prevNL := bytes.LastIndexAny(data[:i], "\n")
+			// if prevNL == -1 {
+			// 	// Line start is at beginning of chunk
+			// 	prevNL = 0
+			// }
+			// nextNL := bytes.IndexAny(data[i:], "\n")
+			// if nextNL == -1 {
+			// 	// Line end is at end of chunk
+			// 	nextNL = len(data) - 1
+			// } else {
+			// 	nextNL += i
+			// }
 
-			line := data[prevNL:nextNL]
-			localResult = append(localResult, line)
-			// fmt.Fprintln(os.Stdout, string(line))
+			// line := data[prevNL:nextNL]
+			// localResult = append(localResult, line)
 		}
 		result <- localResult
+		log.Print("count =", n)
 
 		// needle := ahocorasick.NewAhoCorasick([]string{"eckham"})
 
