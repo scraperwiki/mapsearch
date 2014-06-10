@@ -81,7 +81,7 @@ func main() {
 
 		for {
 			i = bytes.Index(data[i+1:], []byte("eckham"))
-			log.Println("Loc:", i)
+			log.Println(idx, "Loc:", i)
 			if i == -1 {
 				break
 			}
