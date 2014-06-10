@@ -58,6 +58,7 @@ func Query(output io.Writer, query string, cancel chan struct{}) {
 	if err != nil {
 		panic(err)
 	}
+	defer mapping.Unmap()
 
 	totalSize := len(mapping)
 	Nreaders := runtime.GOMAXPROCS(0)
@@ -81,7 +82,6 @@ func Query(output io.Writer, query string, cancel chan struct{}) {
 		for {
 			select {
 			case <-cancel:
-				log.Println("Cancelling during readchunk..")
 				return
 			default:
 			}
@@ -129,7 +129,6 @@ func Query(output io.Writer, query string, cancel chan struct{}) {
 		for _, r := range allResults {
 			select {
 			case <-cancel:
-				log.Println("Cancelling during readchunk..")
 				return
 			default:
 			}
