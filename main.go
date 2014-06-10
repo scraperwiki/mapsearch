@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
+	// "bufio"
+	// "bytes"
 	"log"
 	"os"
 	"regexp"
@@ -47,19 +47,21 @@ func main() {
 		}
 
 		data := mapping[start:end]
+		locs := regex.FindIndex(data)
+		matches := len(locs)
 
-		buf := bytes.NewReader(data)
-		s := bufio.NewScanner(buf)
+		// buf := bytes.NewReader(data)
+		// s := bufio.NewScanner(buf)
 
-		lines := 0
-		matches := 0
+		// lines := 0
+		// matches := 0
 
-		for s.Scan() {
-			lines++
-			locs := regex.FindIndex(s.Bytes())
-			matches += len(locs)
-		}
-		log.Println("Read", lines, "lines")
+		// for s.Scan() {
+		// 	lines++
+		// 	locs := regex.FindIndex(s.Bytes())
+		// 	matches += len(locs)
+		// }
+		// log.Println("Read", lines, "lines")
 
 		result <- matches
 	}
