@@ -87,8 +87,6 @@ func main() {
 			if prevNL == -1 {
 				// Line start is at beginning of chunk
 				prevNL = 0
-			} else {
-				prevNL += i
 			}
 			nextNL := bytes.IndexAny(data[i:], "\n")
 			if nextNL == -1 {
