@@ -79,11 +79,13 @@ func Query(output io.Writer, query string, cancel chan struct{}) {
 		localResult := [][]byte{}
 
 		for {
-			_, cancelled := <-cancel
-			if cancelled {
+			select {
+			case <-cancel:
 				log.Println("Cancelling during readchunk..")
 				return
+			default:
 			}
+
 			i = Index(data, []byte(query), i+1)
 			if i == -1 {
 				break
@@ -125,10 +127,11 @@ func Query(output io.Writer, query string, cancel chan struct{}) {
 		log.Println("Total matches:", len(allResults))
 
 		for _, r := range allResults {
-			_, cancelled := <-cancel
-			if cancelled {
-				log.Println("Cancelling during copy")
+			select {
+			case <-cancel:
+				log.Println("Cancelling during readchunk..")
 				return
+			default:
 			}
 			fmt.Fprintln(output, string(r))
 		}
