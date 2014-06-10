@@ -3,6 +3,7 @@ package main
 import (
 	// "bufio"
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"runtime"
@@ -68,7 +69,8 @@ func main() {
 				prevNL = 0
 			}
 			// log.Println("i=", i, string(data[i:i+50]))
-			println(string(wholeData[prevNL : here-i+nextNL]))
+			line := wholeData[prevNL : here-i+nextNL]
+			fmt.Fprintln(os.Stdout, line)
 			data = data[i+1:]
 		}
 		result <- n
