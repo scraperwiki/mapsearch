@@ -12,7 +12,7 @@ import (
 
 	"github.com/edsrzf/mmap-go"
 	// "github.com/moovweb/rubex"
-	"code.google.com/p/ahocorasick"
+	// "code.google.com/p/ahocorasick"
 )
 
 const MiB = 1024 * 1024
@@ -43,7 +43,6 @@ func main() {
 
 	// regex := rubex.MustCompile("(?i)beckham")
 	// _ = regex
-	_ = bytes.IndexFunc
 
 	readChunk := func(idx int) {
 		start, end := idx*chunkSize, (idx+1)*chunkSize
@@ -51,29 +50,37 @@ func main() {
 			end = totalSize
 		}
 
+		wholeData := mapping[start:end]
 		data := mapping[start:end]
 
-		needle := ahocorasick.NewAhoCorasick([]string{"eckham"})
-
 		var n int
-		for result := range ahocorasick.MatchBytes(data, needle) {
+		for {
 			n++
-			_ = result
+			i := bytes.Index(data, []byte("eckham"))
+			if i == -1 {
+				break
+			}
+			nextNL := bytes.IndexAny(data, "\n")
+			here := len(wholeData) - len(data) + i
+			dataUptoHere := wholeData[:here]
+			prevNL := bytes.LastIndexAny(dataUptoHere, "\n")
+			if prevNL == -1 {
+				prevNL = 0
+			}
+			// log.Println("i=", i, string(data[i:i+50]))
+			println(string(wholeData[prevNL : here-i+nextNL]))
+			data = data[i+1:]
 		}
 		result <- n
 
+		// needle := ahocorasick.NewAhoCorasick([]string{"eckham"})
+
 		// var n int
-		// for {
+		// for result := range ahocorasick.MatchBytes(data, needle) {
 		// 	n++
-		// 	i := bytes.Index(data, []byte("eckham"))
-		// 	if i == -1 {
-		// 		break
-		// 	}
-		// 	// log.Println("i=", i, string(data[i:i+50]))
-		// 	data = data[i+1:]
+		// 	_ = result
 		// }
 		// result <- n
-
 		// log.Println("Here:", len(data))
 		// locs := regex.FindIndex(data[:100*1024])
 		// matches := len(locs)
