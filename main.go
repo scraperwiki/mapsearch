@@ -153,6 +153,7 @@ func main() {
 			close(cancel)
 		}()
 
+		log.Println("Query:", r.URL.RawQuery)
 		Query(w, r.URL.RawQuery, cancel)
 	}
 
