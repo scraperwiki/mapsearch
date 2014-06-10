@@ -84,7 +84,15 @@ func main() {
 			}
 			n++
 			prevNL := bytes.LastIndexAny(data[:i], "\n")
+			if prevNL == -1 {
+				// Line start is at beginning of chunk
+				prevNL = 0
+			}
 			nextNL := bytes.IndexAny(data[i:], "\n")
+			if nextNL == -1 {
+				// Line end is at end of chunk
+				nextNL = len(data) - 1
+			}
 
 			line := data[prevNL:nextNL]
 			fmt.Fprintln(os.Stdout, line)
