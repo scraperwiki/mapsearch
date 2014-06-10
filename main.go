@@ -76,13 +76,13 @@ func main() {
 	close(result)
 	<-finished
 
-	// var b byte
 	// amount := 10 * 1024 * 1024
 
-	// for _, v := range mapping[:amount] {
-	// 	b += v
-	// }
-	// log.Println("Result =", b)
+	var b byte
+	for _, v := range mapping {
+		b += v
+	}
+	log.Println("Result =", b)
 	// data := mapping[:amount]
 
 	// start := time.Now()
