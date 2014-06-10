@@ -149,9 +149,7 @@ func main() {
 
 		cancel := make(chan struct{})
 		go func() {
-			log.Println("Waiting for closenotify")
 			<-w.(http.CloseNotifier).CloseNotify()
-			log.Println("Cancelling request..")
 			close(cancel)
 		}()
 
