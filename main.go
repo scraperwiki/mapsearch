@@ -90,7 +90,6 @@ func main() {
 
 		for {
 			i = Index(data, []byte("eckham"), i+1)
-			log.Println(idx, "Loc:", i)
 			if i == -1 {
 				break
 			}
