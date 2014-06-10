@@ -81,6 +81,7 @@ func Query(output io.Writer, query string, cancel chan struct{}) {
 		for {
 			_, cancelled := <-cancel
 			if cancelled {
+				log.Println("Cancelling during readchunk..")
 				return
 			}
 			i = Index(data, []byte(query), i+1)
@@ -126,6 +127,7 @@ func Query(output io.Writer, query string, cancel chan struct{}) {
 		for _, r := range allResults {
 			_, cancelled := <-cancel
 			if cancelled {
+				log.Println("Cancelling during copy")
 				return
 			}
 			fmt.Fprintln(output, string(r))
@@ -145,7 +147,9 @@ func main() {
 
 		cancel := make(chan struct{})
 		go func() {
+			log.Println("Waiting for closenotify")
 			<-w.(http.CloseNotifier).CloseNotify()
+			log.Println("Cancelling request..")
 			close(cancel)
 		}()
 
