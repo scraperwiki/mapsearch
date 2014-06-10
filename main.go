@@ -46,7 +46,7 @@ func NextNewline(s []byte, start int) int {
 	return nextNL
 }
 
-func Query(output io.Writer, query string) {
+func Query(output io.Writer, query string, cancel chan struct{}) {
 
 	fd, err := os.Open("/mem/output-xsd-fix-no-provenance-factuality.tql")
 	if err != nil {
@@ -79,6 +79,10 @@ func Query(output io.Writer, query string) {
 		localResult := [][]byte{}
 
 		for {
+			_, cancelled := <-cancel
+			if cancelled {
+				return
+			}
 			i = Index(data, []byte(query), i+1)
 			if i == -1 {
 				break
@@ -120,6 +124,10 @@ func Query(output io.Writer, query string) {
 		log.Println("Total matches:", len(allResults))
 
 		for _, r := range allResults {
+			_, cancelled := <-cancel
+			if cancelled {
+				return
+			}
 			fmt.Fprintln(output, string(r))
 		}
 	}()
@@ -134,7 +142,14 @@ func Query(output io.Writer, query string) {
 func main() {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		Query(w, r.URL.RawQuery)
+
+		cancel := make(chan struct{})
+		go func() {
+			<-w.(http.CloseNotifier).CloseNotify()
+			close(cancel)
+		}()
+
+		Query(w, r.URL.RawQuery, cancel)
 	}
 
 	http.HandleFunc("/", handler)
