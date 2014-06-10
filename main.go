@@ -92,7 +92,7 @@ func Query(output io.Writer, query string) {
 			}
 
 			i = nextNL
-			line := data[prevNL:nextNL]
+			line := data[prevNL : nextNL-1]
 			localResult = append(localResult, line)
 		}
 		result <- localResult
