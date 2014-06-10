@@ -46,19 +46,7 @@ func NextNewline(s []byte, start int) int {
 	return nextNL
 }
 
-func Query(output io.Writer, query string, cancel chan struct{}) {
-
-	fd, err := os.Open("/mem/output-xsd-fix-no-provenance-factuality.tql")
-	if err != nil {
-		panic(err)
-	}
-	defer fd.Close()
-
-	mapping, err := mmap.Map(fd, mmap.RDONLY, 0)
-	if err != nil {
-		panic(err)
-	}
-	defer mapping.Unmap()
+func Query(mapping []byte, output io.Writer, query string, cancel chan struct{}) {
 
 	totalSize := len(mapping)
 	Nreaders := runtime.GOMAXPROCS(0)
@@ -144,6 +132,19 @@ func Query(output io.Writer, query string, cancel chan struct{}) {
 }
 
 func main() {
+
+	fd, err := os.Open("/mem/output-xsd-fix-no-provenance-factuality.tql")
+	if err != nil {
+		panic(err)
+	}
+	defer fd.Close()
+
+	mapping, err := mmap.Map(fd, mmap.RDONLY, 0)
+	if err != nil {
+		panic(err)
+	}
+	defer mapping.Unmap()
+
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 
@@ -154,7 +155,7 @@ func main() {
 		}()
 
 		log.Println("Query:", r.URL.RawQuery)
-		Query(w, r.URL.RawQuery, cancel)
+		Query(mapping, w, r.URL.RawQuery, cancel)
 	}
 
 	http.HandleFunc("/", handler)
