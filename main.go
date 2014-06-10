@@ -51,28 +51,38 @@ func main() {
 			end = totalSize
 		}
 
-		wholeData := mapping[start:end]
 		data := mapping[start:end]
+		// wholeData := mapping[start:end]
 
-		var n int
+		// var n int
+		// for {
+		// 	n++
+		// 	i := bytes.Index(data, []byte("eckham"))
+		// 	if i == -1 {
+		// 		break
+		// 	}
+		// 	nextNL := bytes.IndexAny(data, "\n")
+		// 	here := len(wholeData) - len(data) + i
+		// 	dataUptoHere := wholeData[:here]
+		// 	prevNL := bytes.LastIndexAny(dataUptoHere, "\n")
+		// 	if prevNL == -1 {
+		// 		prevNL = 0
+		// 	}
+		// 	// log.Println("i=", i, string(data[i:i+50]))
+		// 	log.Println("start, end, len =", prevNL, here-i+nextNL, len(wholeData)-(here-i+nextNL))
+		// 	line := wholeData[prevNL : here-i+nextNL]
+		// 	fmt.Fprintln(os.Stdout, line)
+		// 	data = data[i+1:]
+		// }
+
+		i := -1
 		for {
-			n++
-			i := bytes.Index(data, []byte("eckham"))
-			if i == -1 {
-				break
-			}
-			nextNL := bytes.IndexAny(data, "\n")
-			here := len(wholeData) - len(data) + i
-			dataUptoHere := wholeData[:here]
-			prevNL := bytes.LastIndexAny(dataUptoHere, "\n")
-			if prevNL == -1 {
-				prevNL = 0
-			}
-			// log.Println("i=", i, string(data[i:i+50]))
-			log.Println("start, end, len =", prevNL, here-i+nextNL, len(wholeData)-(here-i+nextNL))
-			line := wholeData[prevNL : here-i+nextNL]
+			i = bytes.Index(data[i+1:], []byte("eckham"))
+			prevNL := bytes.LastIndexAny(data[:i], "\n")
+			nextNL := bytes.IndexAny(data[i:], "\n")
+
+			line := data[prevNL:nextNL]
 			fmt.Fprintln(os.Stdout, line)
-			data = data[i+1:]
 		}
 		result <- n
 
