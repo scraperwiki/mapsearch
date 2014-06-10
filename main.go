@@ -29,7 +29,7 @@ func main() {
 	log.Println("Alloc'd:", ms.Alloc/MiB, "MiB")
 
 	// var b byte
-	amount := 1024 * 1024 * 1024
+	amount := 10 * 1024 * 1024
 
 	// for _, v := range mapping[:amount] {
 	//      b += v
