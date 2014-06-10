@@ -49,11 +49,17 @@ func main() {
 
 		data := mapping[start:end]
 
-		i := bytes.Index(data, []byte("eckham"))
-		if i >= 0 {
+		var n int
+		for {
+			n++
+			i := bytes.Index(data, []byte("eckham"))
+			if i == -1 {
+				break
+			}
 			log.Println("i=", i, string(data[i:i+50]))
+			data = data[i+1:]
 		}
-		result <- i
+		result <- n
 
 		//locs := regex.FindIndex(data)
 		//matches := len(locs)
