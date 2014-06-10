@@ -13,13 +13,14 @@ func main() {
 		panic(err)
 	}
 	defer fd.Close()
+
 	mapping, err := mmap.Map(fd, mmap.RDONLY, 0)
 	if err != nil {
 		panic(err)
 	}
 
 	var b byte
-	amount := 100 * 1024 * 1024
+	amount := 1024 * 1024 * 1024
 
 	for _, v := range mapping[:amount] {
 		b += v
