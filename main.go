@@ -53,10 +53,10 @@ func main() {
 
 	for i := range N(Nreaders) {
 		wg.Add(1)
-		go func() {
+		go func(i int) {
 			defer wg.Done()
 			readChunk(i)
-		}()
+		}(i)
 	}
 
 	finished := make(chan struct{})
