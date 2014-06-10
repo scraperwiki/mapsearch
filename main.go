@@ -64,6 +64,7 @@ func main() {
 		// }
 		// result <- n
 
+		log.Println("Here:", len(data))
 		locs := regex.FindIndex(data)
 		matches := len(locs)
 		result <- matches
