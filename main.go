@@ -1,3 +1,4 @@
+// ORIG GREP: 127769
 package main
 
 import (
@@ -78,7 +79,7 @@ func Query(output io.Writer, query string) {
 		localResult := [][]byte{}
 
 		for {
-			i = Index(data, []byte("eckham"), i+1)
+			i = Index(data, []byte(query), i+1)
 			if i == -1 {
 				break
 			}
