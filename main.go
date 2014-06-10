@@ -94,6 +94,7 @@ func main() {
 				nextNL = len(data) - 1
 			}
 
+			log.Println("start, end, len =", prevNL, nextNL, len(data)-nextNL)
 			line := data[prevNL:nextNL]
 			fmt.Fprintln(os.Stdout, line)
 		}
