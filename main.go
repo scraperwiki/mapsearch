@@ -62,6 +62,8 @@ func main() {
 		}(i)
 	}
 
+	log.Println("Final =", totalSize)
+
 	finished := make(chan struct{})
 	go func() {
 		defer close(finished)
