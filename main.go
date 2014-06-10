@@ -22,6 +22,15 @@ func N(n int) []struct{} {
 	return make([]struct{}, n)
 }
 
+func Index(s, sep []byte, start int) int {
+	i := bytes.Index(s[start:], sep)
+	if i == -1 {
+		return -1
+	}
+	i += start
+	return i
+}
+
 func main() {
 
 	fd, err := os.Open("/mem/output-xsd-fix-no-provenance-factuality.tql")
@@ -80,7 +89,7 @@ func main() {
 		localResult := [][]byte{}
 
 		for {
-			i = bytes.Index(data[i+1:], []byte("eckham"))
+			i = Index(data, []byte("eckham"), i+1)
 			log.Println(idx, "Loc:", i)
 			if i == -1 {
 				break
