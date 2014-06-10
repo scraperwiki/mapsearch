@@ -81,10 +81,11 @@ func main() {
 
 		for {
 			i = bytes.Index(data[i+1:], []byte("eckham"))
+			log.Println("Loc:", i)
 			if i == -1 {
 				break
 			}
-			// n++
+			n++
 			// prevNL := bytes.LastIndexAny(data[:i], "\n")
 			// if prevNL == -1 {
 			// 	// Line start is at beginning of chunk
