@@ -38,7 +38,7 @@ func main() {
 
 	result := make(chan int)
 
-	regex := regexp.MustCompilePOSIX("(?i)beckham")
+	regex := regexp.MustCompile("(?i)beckham")
 
 	readChunk := func(idx int) {
 		start, end := idx*chunkSize, (idx+1)*chunkSize
