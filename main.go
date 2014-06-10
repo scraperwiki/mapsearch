@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"log"
 	"os"
+	"runtime"
 	// "regexp"
 	"sync"
 	"time"
@@ -32,7 +33,7 @@ func main() {
 	}
 
 	totalSize := len(mapping)
-	const Nreaders = 32
+	Nreaders := runtime.GOMAXPROCS(0)
 
 	chunkSize := totalSize / Nreaders
 
