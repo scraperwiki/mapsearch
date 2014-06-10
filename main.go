@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"log"
 	"os"
+	"regexp"
 	"sync"
 	"time"
 
@@ -35,10 +36,11 @@ func main() {
 
 	chunkSize := totalSize / Nreaders
 
-	result := make(chan byte)
+	result := make(chan int)
+
+	regex := regexp.MustCompilePOSIX("(?i)beckham")
 
 	readChunk := func(idx int) {
-		var b byte
 		start, end := idx*chunkSize, (idx+1)*chunkSize
 		if idx == Nreaders-1 {
 			end = totalSize
@@ -47,26 +49,19 @@ func main() {
 		data := mapping[start:end]
 
 		buf := bytes.NewReader(data)
-
 		s := bufio.NewScanner(buf)
 
 		lines := 0
+		matches := 0
+
 		for s.Scan() {
 			lines++
-			s.Bytes()
+			locs := regex.FindIndex(s.Bytes())
+			matches += len(locs)
 		}
 		log.Println("Read", lines, "lines")
 
-		// s := string(data)
-
-		// for _, r := range s {
-		// 	b += byte(r % 255)
-		// }
-		// for _, v := range data {
-		// 	b += v
-		// }
-
-		result <- b
+		result <- matches
 	}
 
 	var wg sync.WaitGroup
@@ -83,7 +78,7 @@ func main() {
 	go func() {
 		defer close(finished)
 
-		var b byte
+		var b int
 		for r := range result {
 			b += r
 		}
@@ -95,30 +90,4 @@ func main() {
 	log.Println("Elapsed:", time.Since(start))
 	close(result)
 	<-finished
-
-	// amount := 10 * 1024 * 1024
-
-	// var b byte
-	// for _, v := range mapping {
-	// 	b += v
-	// }
-	// log.Println("Result =", b)
-	// data := mapping[:amount]
-
-	// start := time.Now()
-	// index := suffixarray.New(data)
-	// log.Println("Took", time.Since(start), "to build suffix array")
-
-	// // sa.FindAllIndex(r, 100)
-
-	// runtime.ReadMemStats(&ms)
-	// log.Println("Alloc'd:", ms.Alloc/MiB, "MiB")
-
-	// start = time.Now()
-	// places := index.Lookup([]byte("dbpedia"), 10000)
-	// log.Println("Lookup time:", time.Since(start))
-
-	// log.Println("N places:", len(places))
-	// log.Println("places:", places[:10])
-
 }
