@@ -53,7 +53,7 @@ func main() {
 		lines := 0
 		for s.Scan() {
 			lines++
-			s.Text()
+			s.Bytes()
 		}
 		log.Println("Read", lines, "lines")
 
