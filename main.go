@@ -33,8 +33,7 @@ func PrevNewline(s []byte, start int) int {
 		// Line start is at beginning of chunk
 		prevNL = 0
 	}
-	return prevNL
-
+	return prevNL + 1
 }
 
 func NextNewline(s []byte, start int) int {
@@ -134,7 +133,6 @@ func Query(output io.Writer, query string) {
 func main() {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Hello world ", r.URL.RawQuery)
 		Query(w, r.URL.RawQuery)
 	}
 
