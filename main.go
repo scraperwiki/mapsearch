@@ -42,6 +42,10 @@ func main() {
 	readChunk := func(idx int) {
 		var b byte
 		start, end := idx*chunkSize, (idx+1)*chunkSize
+		if idx == Nreaders-1 {
+			end = totalSize
+		}
+
 		data := mapping[start:end]
 		for _, v := range data {
 			b += v
@@ -54,15 +58,11 @@ func main() {
 
 	for i := range N(Nreaders) {
 		wg.Add(1)
-		start, end := i*chunkSize, (i+1)*chunkSize
-		log.Println("start, end =", start, end)
 		go func(i int) {
 			defer wg.Done()
 			readChunk(i)
 		}(i)
 	}
-
-	log.Println("Final =", totalSize)
 
 	finished := make(chan struct{})
 	go func() {
