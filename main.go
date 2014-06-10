@@ -11,7 +11,8 @@ import (
 	"time"
 
 	"github.com/edsrzf/mmap-go"
-	"github.com/moovweb/rubex"
+	// "github.com/moovweb/rubex"
+	"code.google.com/p/ahocorasick"
 )
 
 const MiB = 1024 * 1024
@@ -40,7 +41,7 @@ func main() {
 
 	result := make(chan int)
 
-	regex := rubex.MustCompile("(?i)beckham")
+	// regex := rubex.MustCompile("(?i)beckham")
 	// _ = regex
 	_ = bytes.IndexFunc
 
@@ -51,6 +52,15 @@ func main() {
 		}
 
 		data := mapping[start:end]
+
+		needle := ahocorasick.NewAhoCorasick([]string{"eckham"})
+
+		var n int
+		for result := range ahocorasick.MatchBytes(data, needle) {
+			n++
+			_ = result
+		}
+		result <- n
 
 		// var n int
 		// for {
@@ -64,10 +74,10 @@ func main() {
 		// }
 		// result <- n
 
-		log.Println("Here:", len(data))
-		locs := regex.FindIndex(data[:100*1024])
-		matches := len(locs)
-		result <- matches
+		// log.Println("Here:", len(data))
+		// locs := regex.FindIndex(data[:100*1024])
+		// matches := len(locs)
+		// result <- matches
 
 		// buf := bytes.NewReader(data)
 		// s := bufio.NewScanner(buf)
@@ -110,5 +120,5 @@ func main() {
 	wg.Wait()
 	log.Println("Elapsed:", time.Since(start))
 	close(result)
-	<-finished
+
 }
