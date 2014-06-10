@@ -28,11 +28,7 @@ func main() {
 		panic(err)
 	}
 
-	// runtime.ReadMemStats(&ms)
-	// log.Println("Alloc'd:", ms.Alloc/MiB, "MiB")
-
 	totalSize := len(mapping)
-
 	const Nreaders = 32
 
 	chunkSize := totalSize / Nreaders
@@ -47,9 +43,15 @@ func main() {
 		}
 
 		data := mapping[start:end]
-		for _, v := range data {
-			b += v
+
+		s := string(data)
+
+		for _, r := range s {
+			b += byte(r % 255)
 		}
+		// for _, v := range data {
+		// 	b += v
+		// }
 
 		result <- b
 	}
