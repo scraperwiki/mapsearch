@@ -87,11 +87,15 @@ func main() {
 			if prevNL == -1 {
 				// Line start is at beginning of chunk
 				prevNL = 0
+			} else {
+				prevNL += i
 			}
 			nextNL := bytes.IndexAny(data[i:], "\n")
 			if nextNL == -1 {
 				// Line end is at end of chunk
 				nextNL = len(data) - 1
+			} else {
+				nextNL += i
 			}
 
 			log.Println("start, end, len =", prevNL, nextNL, len(data)-nextNL)
