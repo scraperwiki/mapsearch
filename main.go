@@ -31,6 +31,25 @@ func Index(s, sep []byte, start int) int {
 	return i
 }
 
+func PrevNewline(s []byte, start int) int {
+	prevNL := bytes.LastIndexAny(s[:start], "\n")
+	if prevNL == -1 {
+		// Line start is at beginning of chunk
+		prevNL = 0
+	}
+	return prevNL
+
+}
+
+func NextNewline(s []byte, start int) int {
+	nextNL := bytes.IndexAny(s[start:], "\n")
+	if nextNL == -1 {
+		return -1
+	}
+	nextNL += start
+	return nextNL
+}
+
 func main() {
 
 	fd, err := os.Open("/mem/output-xsd-fix-no-provenance-factuality.tql")
@@ -94,6 +113,15 @@ func main() {
 				break
 			}
 			n++
+			prevNL := PrevNewline(data, i)
+			nextNL := NextNewline(data, i)
+			if nextNL == -1 {
+				// Line end is at end of chunk
+				// nextNL = len(data) - 1
+				break
+			}
+
+			i = nextNL
 			// prevNL := bytes.LastIndexAny(data[:i], "\n")
 			// if prevNL == -1 {
 			// 	// Line start is at beginning of chunk
@@ -107,11 +135,11 @@ func main() {
 			// 	nextNL += i
 			// }
 
-			// line := data[prevNL:nextNL]
-			// localResult = append(localResult, line)
+			line := data[prevNL:nextNL]
+			localResult = append(localResult, line)
 		}
 		result <- localResult
-		log.Print("count =", n)
+		log.Println("count =", n)
 
 		// needle := ahocorasick.NewAhoCorasick([]string{"eckham"})
 
