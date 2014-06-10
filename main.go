@@ -40,7 +40,7 @@ func main() {
 
 	chunkSize := totalSize / Nreaders
 
-	result := make(chan int)
+	result := make(chan [][]byte)
 
 	// regex := rubex.MustCompile("(?i)beckham")
 	// _ = regex
@@ -77,6 +77,8 @@ func main() {
 
 		i := -1
 		var n int
+		localResult := [][]byte{}
+
 		for {
 			i = bytes.Index(data[i+1:], []byte("eckham"))
 			if i == -1 {
@@ -97,9 +99,10 @@ func main() {
 			}
 
 			line := data[prevNL:nextNL]
-			fmt.Fprintln(os.Stdout, string(line))
+			localResult = append(localResult, line)
+			// fmt.Fprintln(os.Stdout, string(line))
 		}
-		result <- n
+		result <- localResult
 
 		// needle := ahocorasick.NewAhoCorasick([]string{"eckham"})
 
@@ -144,16 +147,21 @@ func main() {
 	go func() {
 		defer close(finished)
 
-		var b int
+		allResults := [][]byte{}
+
 		for r := range result {
-			b += r
+			allResults = append(allResults, r...)
 		}
-		log.Println("Result =", b)
+		log.Println("Total matches:", len(allResults))
+
+		for r := range allResults {
+			fmt.Fprintln(os.Stdout, string(r))
+		}
 	}()
 
 	start := time.Now()
 	wg.Wait()
 	log.Println("Elapsed:", time.Since(start))
 	close(result)
-
+	<-finished
 }
